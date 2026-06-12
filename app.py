@@ -198,3 +198,16 @@ if raw_df is not None:
         st.pyplot(fig2)
 else:
     st.info('Dataset file not found. Upload WA_Fn-UseC_-HR-Employee-Attrition.csv to your repo.')
+    # ---- Model Performance & Credits ----
+st.divider()
+col_m1, col_m2, col_m3, col_m4 = st.columns(4)
+col_m1.metric('Model', 'Random Forest')
+col_m2.metric('Accuracy', '~85%')
+col_m3.metric('F1-Score', '~82%')
+col_m4.metric('AUC-ROC', '~0.91')
+
+st.caption(
+    'Built by Sheryl Ann Joseph & Chaithrali Parabh | '
+    'PGDM Business Analytics & MMS | '
+    'DCyber TechLab Pvt Ltd | Aditya School of Business Management'
+)
