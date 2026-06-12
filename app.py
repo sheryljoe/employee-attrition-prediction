@@ -208,6 +208,5 @@ col_m4.metric('AUC-ROC', '~0.91')
 
 st.caption(
     'Built by Sheryl Ann Joseph & Chaithrali Parabh | '
-    'PGDM Business Analytics & MMS | '
     'DCyber TechLab Pvt Ltd | Aditya School of Business Management'
 )
