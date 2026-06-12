@@ -5,9 +5,9 @@ import numpy as np
 import joblib
 # ---- Page configuration ----
 st.set_page_config(
-    page_title='Employee Attrition Predictor',
-    page_icon='\U0001f4ca',
-    layout='wide'
+page_title='Employee Attrition Predictor',
+page_icon='\U0001f4ca',
+layout='wide'
 )
 # ---- Load model and scaler ----
 @st.cache_resource
