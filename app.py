@@ -12,10 +12,9 @@ layout='wide'
 # ---- Load model and scaler ----
 @st.cache_resource
 def load_model():
-    model  = joblib.load('random_forest.pkl')
-    scaler = joblib.load('scaler.pkl')
-    return model, scaler
- 
+model  = joblib.load('random_forest.pkl')
+scaler = joblib.load('scaler.pkl')
+return model, scaler
 model, scaler = load_model()
 # ---- App Title ----
 st.title('\U0001f4ca Employee Attrition Prediction Dashboard')
