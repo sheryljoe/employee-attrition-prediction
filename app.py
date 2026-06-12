@@ -1,5 +1,4 @@
 # app.py  –  Employee Attrition Prediction Dashboard
- 
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -8,7 +7,7 @@ import joblib
 # ---- Page configuration ----
 st.set_page_config(
     page_title='Employee Attrition Predictor',
-    page_icon='U0001f4ca',
+    page_icon='\U0001f4ca',
     layout='wide'
 )
  
@@ -22,11 +21,11 @@ def load_model():
 model, scaler = load_model()
  
 # ---- App Title ----
-st.title('U0001f4ca Employee Attrition Prediction Dashboard')
+st.title('\U0001f4ca Employee Attrition Prediction Dashboard')
 st.write('Enter employee details below to predict attrition risk.')
 st.divider()
 # ---- Sidebar Input Form ----
-st.sidebar.header('U0001f464 Employee Details')
+st.sidebar.header('\U0001f464 Employee Details')
 
 age           = st.sidebar.slider('Age', 18, 60, 35)
 monthly_income = st.sidebar.number_input('Monthly Income (₹)', 1000, 20000, 5000, step=500)
@@ -65,7 +64,7 @@ input_data = pd.DataFrame([{
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader('U0001f9e0 Attrition Prediction')
+    st.subheader('\U0001f9e0 Attrition Prediction')
     if st.button('Predict Attrition Risk', type='primary'):
         input_scaled = scaler.transform(input_data)
         prediction   = model.predict(input_scaled)[0]
@@ -73,25 +72,20 @@ with col1:
         if prediction == 1:
             st.error(f'⚠️ HIGH RISK: This employee has a {probability:.1f}% probability of leaving.')
         else:
-            st.success(f'✅ LOW RISK: This employee has only a {probability:.1f}% probability of leaving.')
+    st.success(f'✅ LOW RISK: This employee has only a {probability:.1f}% probability of leaving.')
 
 with col2:
-    st.subheader('U0001f4cb Input Summary')
+    st.subheader('\U0001f4cb Input Summary')
     summary = pd.DataFrame({'Attribute': ['Age','Monthly Income','OverTime','Job Satisfaction',
                                            'Work-Life Balance','Years at Company'],
                             'Value': [age, f'₹{monthly_income:,}', overtime,
                                       f'{job_sat}/4', f'{work_life}/4', years_company]})
     st.dataframe(summary, hide_index=True)
-
-
-
 # BOTTOM of app.py
-
 import matplotlib.pyplot as plt
 import seaborn as sns
-
 st.divider()
-st.subheader('U0001f4ca Attrition Analytics – Full Dataset Overview')
+st.subheader('\U0001f4ca Attrition Analytics – Full Dataset Overview')
 
 # Load original dataset for charts (include it in your GitHub repo)
 try:
@@ -116,5 +110,3 @@ try:
 
 except FileNotFoundError:
     st.info('Dataset file not found. Upload WA_Fn-UseC_-HR-Employee-Attrition.csv to your repo.')
-
-
