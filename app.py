@@ -677,7 +677,8 @@ overtime_enc   = 1 if overtime == 'Yes' else 0
 department_enc = department_map[department]
 job_role_enc   = job_role_map[job_role]
 
-input_data = pd.DataFrame([{
+# Build feature dict — auto-adapts to whether scaler was trained with 30 or 31 features
+_base_features = {
     'Age':                      age,
     'BusinessTravel':           business_travel_map.get(dv('BusinessTravel','Travel_Rarely'), 2),
     'DailyRate':                int(dv('DailyRate', 800)),
@@ -708,7 +709,14 @@ input_data = pd.DataFrame([{
     'YearsInCurrentRole':       years_in_role,
     'YearsSinceLastPromotion':  int(dv('YearsSinceLastPromotion', 1)),
     'YearsWithCurrManager':     int(dv('YearsWithCurrManager', 3)),
-}])
+}
+# If scaler was trained with EmployeeCount kept in (31 features), inject it at column index 7
+_n_expected = getattr(scaler, 'n_features_in_', 30)
+if _n_expected == 31:
+    _items = list(_base_features.items())
+    _items.insert(7, ('EmployeeCount', 1))
+    _base_features = dict(_items)
+input_data = pd.DataFrame([_base_features])
 
 
 # ============================================================
