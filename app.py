@@ -787,39 +787,40 @@ if raw_df is not None:
     except:
         _high_risk_n = 0
 
-st.markdown("""
+_kpi_html = f"""
 <style>
-.kpi-strip { display:flex; gap:16px; margin:0 0 28px 0; }
-.kpi-box {
+.kpi-strip {{ display:flex; gap:16px; margin:0 0 28px 0; }}
+.kpi-box {{
     flex:1; background:white; border-radius:14px;
     padding:18px 20px; box-shadow:0 2px 12px rgba(0,0,0,0.07);
     border-top:4px solid #3B82F6;
-}
-.kpi-box.red   { border-top-color:#DC2626; }
-.kpi-box.amber { border-top-color:#D97706; }
-.kpi-lbl { font-size:11px; font-weight:700; color:#6B7280;
-            text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
-.kpi-val { font-size:30px; font-weight:900; color:#0D1E3D; line-height:1; }
-.kpi-sub { font-size:11px; color:#9CA3AF; margin-top:4px; }
+}}
+.kpi-box.red   {{ border-top-color:#DC2626; }}
+.kpi-box.amber {{ border-top-color:#D97706; }}
+.kpi-lbl {{ font-size:11px; font-weight:700; color:#6B7280;
+            text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }}
+.kpi-val {{ font-size:30px; font-weight:900; color:#0D1E3D; line-height:1; }}
+.kpi-sub {{ font-size:11px; color:#9CA3AF; margin-top:4px; }}
 </style>
 <div class="kpi-strip">
     <div class="kpi-box">
         <div class="kpi-lbl">👥 Total Employees</div>
-        <div class="kpi-val">{total}</div>
+        <div class="kpi-val">{_total_emp:,}</div>
         <div class="kpi-sub">IBM HR Dataset</div>
     </div>
     <div class="kpi-box red">
         <div class="kpi-lbl">📉 Overall Attrition Rate</div>
-        <div class="kpi-val">{rate}%</div>
+        <div class="kpi-val">{_attr_rate}%</div>
         <div class="kpi-sub">Historical attrition in dataset</div>
     </div>
     <div class="kpi-box amber">
         <div class="kpi-lbl">🔴 High Risk Employees</div>
-        <div class="kpi-val">{highrisk}</div>
+        <div class="kpi-val">{_high_risk_n}</div>
         <div class="kpi-sub">Model predicts ≥75% chance of leaving</div>
     </div>
 </div>
-""".format(total=f"{_total_emp:,}", rate=_attr_rate, highrisk=_high_risk_n), unsafe_allow_html=True)
+"""
+st.markdown(_kpi_html, unsafe_allow_html=True)
 
 # ── How to use expander ──
 with st.expander("ℹ️  How to use this dashboard  |  About the prediction model"):
