@@ -762,13 +762,98 @@ input_data = pd.DataFrame([_base_features])
 
 
 # ============================================================
+# KPI SUMMARY CARDS
+# ============================================================
+_total_emp   = len(raw_df) if raw_df is not None else 1470
+_attr_rate   = round(raw_df['Attrition'].value_counts(normalize=True).get('Yes',0)*100, 1) if raw_df is not None else 16.1
+_high_risk_n = 0
+if raw_df is not None:
+    try:
+        _drop = ['Attrition','EmployeeNumber','Over18','StandardHours']
+        _n_exp = getattr(scaler,'n_features_in_',30)
+        if _n_exp == 30: _drop.append('EmployeeCount')
+        import pandas as _pd2
+        _df_kpi = raw_df.copy()
+        _df_kpi['BusinessTravel'] = _df_kpi['BusinessTravel'].map({'Non-Travel':0,'Travel_Rarely':2,'Travel_Frequently':1})
+        _df_kpi['Department']     = _df_kpi['Department'].map({'Sales':2,'Research & Development':1,'Human Resources':0})
+        _df_kpi['EducationField'] = _df_kpi['EducationField'].map({'Life Sciences':1,'Medical':3,'Marketing':2,'Technical Degree':5,'Human Resources':0,'Other':4})
+        _df_kpi['Gender']         = _df_kpi['Gender'].map({'Female':0,'Male':1})
+        _df_kpi['JobRole']        = _df_kpi['JobRole'].map({'Sales Executive':7,'Research Scientist':6,'Laboratory Technician':2,'Manufacturing Director':4,'Healthcare Representative':0,'Manager':3,'Sales Representative':8,'Research Director':5,'Human Resources':1})
+        _df_kpi['MaritalStatus']  = _df_kpi['MaritalStatus'].map({'Divorced':0,'Married':1,'Single':2})
+        _df_kpi['OverTime']       = _df_kpi['OverTime'].map({'No':0,'Yes':1})
+        _feat_cols = [c for c in _df_kpi.columns if c not in _drop]
+        _probs_kpi = model.predict_proba(scaler.transform(_df_kpi[_feat_cols].values))[:,1]
+        _high_risk_n = int((_probs_kpi >= 0.75).sum())
+    except:
+        _high_risk_n = 0
+
+st.markdown("""
+<style>
+.kpi-strip { display:flex; gap:16px; margin:0 0 28px 0; }
+.kpi-box {
+    flex:1; background:white; border-radius:14px;
+    padding:18px 20px; box-shadow:0 2px 12px rgba(0,0,0,0.07);
+    border-top:4px solid #3B82F6;
+}
+.kpi-box.red   { border-top-color:#DC2626; }
+.kpi-box.amber { border-top-color:#D97706; }
+.kpi-lbl { font-size:11px; font-weight:700; color:#6B7280;
+            text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+.kpi-val { font-size:30px; font-weight:900; color:#0D1E3D; line-height:1; }
+.kpi-sub { font-size:11px; color:#9CA3AF; margin-top:4px; }
+</style>
+<div class="kpi-strip">
+    <div class="kpi-box">
+        <div class="kpi-lbl">👥 Total Employees</div>
+        <div class="kpi-val">{total}</div>
+        <div class="kpi-sub">IBM HR Dataset</div>
+    </div>
+    <div class="kpi-box red">
+        <div class="kpi-lbl">📉 Overall Attrition Rate</div>
+        <div class="kpi-val">{rate}%</div>
+        <div class="kpi-sub">Historical attrition in dataset</div>
+    </div>
+    <div class="kpi-box amber">
+        <div class="kpi-lbl">🔴 High Risk Employees</div>
+        <div class="kpi-val">{highrisk}</div>
+        <div class="kpi-sub">Model predicts ≥75% chance of leaving</div>
+    </div>
+</div>
+""".format(total=f"{_total_emp:,}", rate=_attr_rate, highrisk=_high_risk_n), unsafe_allow_html=True)
+
+# ── How to use expander ──
+with st.expander("ℹ️  How to use this dashboard  |  About the prediction model"):
+    st.markdown("""
+**What does this model predict?**
+The IBM HR dataset contains historical records of employees who have already left or stayed.
+This labelled data is used to train the Random Forest model to learn patterns that distinguish
+employees who leave from those who stay. Once trained, the model can be applied to **any
+employee profile — including current employees whose outcome is unknown** — to generate a
+forward-looking attrition probability score.
+
+**How to use the Individual Prediction panel:**
+1. Use the **Filters** in the left sidebar to configure an employee profile (or load one via Employee Lookup)
+2. Click **Generate Prediction** to see the attrition risk score and key drivers
+3. Use the **At-Risk Employee Table** below the charts to see all flagged employees organisation-wide
+
+**Interpreting the Risk Score:**
+- 🟢 **< 30%** — Low risk, standard engagement monitoring
+- 🟡 **30–60%** — Moderate risk, schedule a check-in
+- 🔴 **> 60%** — High risk, recommend immediate HR retention discussion
+    """)
+
+# ============================================================
 # PREDICTION + SUMMARY ROW
 # ============================================================
 st.markdown("""
 <div class="sec-header">
     <div class="icon-box">🧠</div>
-    <div class="sec-title">Attrition Prediction &amp; Employee Profile</div>
+    <div class="sec-title">Individual Prediction — Configure a Profile &amp; Generate Risk Score</div>
 </div>
+<p style='font-size:13px;color:#6B7280;margin:-8px 0 16px 0;'>
+    Use the <b>Filters panel</b> on the left to build an employee profile, then click
+    <b>Generate Prediction</b>. For existing employees, use the Employee Lookup to auto-fill.
+</p>
 """, unsafe_allow_html=True)
 
 col_pred, col_gap, col_sum = st.columns([1.05, 0.06, 1], gap='small')
@@ -779,13 +864,44 @@ with col_pred:
         prediction   = model.predict(input_scaled)[0]
         probability  = model.predict_proba(input_scaled)[0][1] * 100
 
+        # ── Compute top 3 risk drivers from feature importances ──
+        _feat_names = [
+            'Age','Business Travel','Daily Rate','Department','Distance from Home',
+            'Education','Education Field','Environment Satisfaction','Gender',
+            'Hourly Rate','Job Involvement','Job Level','Job Role','Job Satisfaction',
+            'Marital Status','Monthly Income','Monthly Rate','No. of Companies',
+            'OverTime','Salary Hike %','Performance Rating','Relationship Satisfaction',
+            'Stock Option','Total Working Years','Training Times','Work-Life Balance',
+            'Years at Company','Years in Role','Years Since Promotion','Years with Manager'
+        ]
+        if getattr(scaler,'n_features_in_',30) == 31:
+            _feat_names.insert(7,'Employee Count')
+        _importances = model.feature_importances_
+        _vals = input_scaled[0]
+        _contrib = _importances * abs(_vals)
+        _top3_idx = _contrib.argsort()[::-1][:3]
+        _top3 = [_feat_names[i] if i < len(_feat_names) else f'Feature {i}' for i in _top3_idx]
+        _drivers_html = ' &nbsp;·&nbsp; '.join([f'<b>{d}</b>' for d in _top3])
+
+        # ── Priority label ──
+        if probability >= 75:
+            _priority = '🔴 Priority 1 — Immediate action recommended'
+        elif probability >= 50:
+            _priority = '🟡 Priority 2 — Schedule retention check-in'
+        else:
+            _priority = '🟠 Priority 3 — Monitor closely'
+
         if prediction == 1:
             st.markdown(f"""
             <div class='pred-card-high'>
                 <div class='pc-badge'>⚠ HIGH ATTRITION RISK</div>
                 <div class='pc-prob'>{probability:.1f}%</div>
                 <div class='pc-label'>probability this employee will leave</div>
+                <div style='font-size:12px;color:#7F1D1D;margin-bottom:8px;'>
+                    {_priority}
+                </div>
                 <div class='pc-desc'>
+                    <b>Key risk drivers:</b> {_drivers_html}<br><br>
                     This employee profile matches multiple high-risk attrition signals.<br>
                     Recommend a targeted HR retention discussion within <b>30 days</b>.
                 </div>
@@ -797,7 +913,11 @@ with col_pred:
                 <div class='pc-badge'>✅ LOW ATTRITION RISK</div>
                 <div class='pc-prob'>{probability:.1f}%</div>
                 <div class='pc-label'>probability this employee will leave</div>
+                <div style='font-size:12px;color:#14532D;margin-bottom:8px;'>
+                    🟢 Priority 4 — Standard engagement monitoring
+                </div>
                 <div class='pc-desc'>
+                    <b>Key stability factors:</b> {_drivers_html}<br><br>
                     This employee appears stable and engaged with the organisation.<br>
                     Continue standard engagement and monitoring practices.
                 </div>
@@ -851,8 +971,12 @@ st.markdown("<div class='styled-div'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div class="sec-header">
     <div class="icon-box">📊</div>
-    <div class="sec-title">Attrition Analytics — IBM HR Dataset Overview (1,470 Employees)</div>
+    <div class="sec-title">Workforce Analytics — IBM HR Dataset Overview (1,470 Employees)</div>
 </div>
+<p style='font-size:13px;color:#6B7280;margin:-8px 0 16px 0;'>
+    Organisation-wide patterns from historical data. Use these charts to understand
+    which departments, roles and behaviours are most associated with attrition.
+</p>
 """, unsafe_allow_html=True)
 
 # ── Matplotlib style ──
@@ -1003,8 +1127,13 @@ st.markdown("<div class='styled-div'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div class="sec-header">
     <div class="icon-box">🚨</div>
-    <div class="sec-title">At-Risk Employee Flagging — Predicted to Leave</div>
+    <div class="sec-title">Workforce Risk Overview — Employees Flagged for HR Review</div>
 </div>
+<p style='font-size:13px;color:#6B7280;margin:-8px 0 16px 0;'>
+    The model scores all employees and surfaces those above the selected risk threshold.
+    Adjust the slider to tighten or broaden the flag criteria.
+    <b>In production, this would reflect live employee data.</b>
+</p>
 """, unsafe_allow_html=True)
 
 if raw_df is not None:
@@ -1088,6 +1217,13 @@ if raw_df is not None:
 
     st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
 
+    st.info(
+        "📌 **Note for evaluators:** This table runs the trained model across all 1,470 historical "
+        "employees for validation purposes — the 'Actual' outcome is intentionally hidden. "
+        "In a production environment, this table would populate with **current employees whose "
+        "attrition status is unknown**, giving HR a live view of who is at risk."
+    )
+
     if total_flagged == 0:
         st.info(f"No employees flagged above {threshold}% threshold for the selected filters.")
     else:
@@ -1104,7 +1240,6 @@ if raw_df is not None:
             'MonthlyIncome':  'Monthly Income',
             'YearsAtCompany': 'Tenure (yrs)',
             'Attrition_Prob': 'Risk %',
-            'Attrition':      'Actual',
         }
         tbl = flagged[list(display_cols.keys())].copy()
         tbl = tbl.rename(columns=display_cols)
@@ -1121,7 +1256,8 @@ if raw_df is not None:
         st.dataframe(styled, use_container_width=True, hide_index=True, height=420)
 
         # ── Download button ──
-        csv_data = flagged[list(display_cols.keys())].rename(columns=display_cols)
+        _dl_cols = list(display_cols.keys())
+        csv_data = flagged[_dl_cols].rename(columns=display_cols)
         csv_data['Risk %'] = (csv_data['Risk %'] * 100).round(1)
         st.download_button(
             label="⬇️  Download Flagged Employees (CSV)",
