@@ -23,7 +23,25 @@ st.set_page_config(
 st.markdown("""
 <style>
 /* ── Reset & base ── */
-#MainMenu, footer, header {visibility: hidden;}
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+/* Hide header background/border but KEEP sidebar toggle visible */
+header[data-testid="stHeader"] {
+    background: transparent !important;
+    border-bottom: none !important;
+}
+/* Ensure the sidebar collapse/expand button is always visible */
+[data-testid="collapsedControl"],
+[data-testid="stSidebarCollapsedControl"],
+button[data-testid="collapsedControl"] {
+    visibility: visible !important;
+    display: flex !important;
+    opacity: 1 !important;
+    z-index: 999999 !important;
+    position: fixed !important;
+    top: 0.5rem;
+    left: 0.5rem;
+}
 * {box-sizing: border-box;}
 html, body, [class*="css"] {
     font-family: 'Segoe UI', 'Inter', Arial, sans-serif;
