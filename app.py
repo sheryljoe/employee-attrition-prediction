@@ -563,7 +563,7 @@ gender_map           = {'Female': 0, 'Male': 1}
 marital_status_map   = {'Divorced': 0, 'Married': 1, 'Single': 2}
 education_field_map  = {
     'Life Sciences': 1, 'Medical': 3, 'Marketing': 2,
-    'Technical Degree': 4, 'Human Resources': 0, 'Other': 5
+    'Technical Degree': 5, 'Human Resources': 0, 'Other': 4
 }
 
 # ============================================================
@@ -685,7 +685,6 @@ input_data = pd.DataFrame([{
     'DistanceFromHome':         distance,
     'Education':                int(dv('Education', 3)),
     'EducationField':           education_field_map.get(dv('EducationField','Life Sciences'), 1),
-    'EmployeeCount':            1,
     'EnvironmentSatisfaction':  env_sat,
     'Gender':                   gender_map.get(dv('Gender','Male'), 1),
     'HourlyRate':               int(dv('HourlyRate', 65)),
