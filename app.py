@@ -456,7 +456,7 @@ st.markdown("""
     <div class="hero-text">
         <div class="hero-title">Employee Attrition Prediction Dashboard</div>
         <div class="hero-subtitle">
-            DCyber TechLab Pvt Ltd, Mumbai &nbsp;·&nbsp;
+            DCyber TechLab Pvt Ltd, &nbsp;·&nbsp;
             Aditya School of Business Management
         </div>
     </div>
