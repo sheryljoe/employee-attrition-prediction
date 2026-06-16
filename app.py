@@ -1117,7 +1117,7 @@ if raw_df is not None:
             elif v >= 50: return 'background-color:#FEF3C7; color:#92400E; font-weight:600'
             else:          return 'background-color:#FFF7ED; color:#9A3412'
 
-        styled = tbl.style.applymap(colour_risk, subset=['Risk %'])
+        styled = tbl.style.map(colour_risk, subset=['Risk %'])
         st.dataframe(styled, use_container_width=True, hide_index=True, height=420)
 
         # ── Download button ──
