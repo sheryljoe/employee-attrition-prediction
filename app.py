@@ -139,16 +139,11 @@ html, body, [class*="css"] {
 
 /* Name logo circle */
 .hero-logo {
-    width: 90px; height: 90px;
-    border-radius: 22px;
-    background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 32px; font-weight: 900;
-    color: white; letter-spacing: 2px;
-    box-shadow: 0 6px 24px rgba(59,130,246,0.50);
     flex-shrink: 0;
-    border: 3px solid rgba(255,255,255,0.20);
     z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .hero-text {z-index: 1;}
@@ -449,12 +444,53 @@ education_field_map  = {
 # ============================================================
 st.markdown("""
 <div class="hero-banner">
-    <div class="hero-logo">SJ</div>
+    <div class="hero-logo">
+        <!-- Company-style SVG logo for Sheryl Joseph -->
+        <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Outer ring -->
+            <circle cx="48" cy="48" r="46" fill="url(#outerGrad)" opacity="0.15"/>
+            <!-- Main rounded square background -->
+            <rect x="6" y="6" width="84" height="84" rx="22" fill="url(#mainGrad)"/>
+            <!-- Inner glow ring -->
+            <rect x="6" y="6" width="84" height="84" rx="22"
+                  fill="none" stroke="url(#ringGrad)" stroke-width="1.5"/>
+            <!-- Top accent bar -->
+            <rect x="18" y="16" width="60" height="5" rx="2.5" fill="white" opacity="0.18"/>
+            <!-- Letter S — bold custom path -->
+            <text x="48" y="52" text-anchor="middle" dominant-baseline="middle"
+                  font-family="Segoe UI, Arial Black, sans-serif"
+                  font-size="38" font-weight="900" fill="white"
+                  letter-spacing="-1">S</text>
+            <!-- Small "J" superscript pill -->
+            <rect x="56" y="22" width="20" height="13" rx="6.5" fill="white" opacity="0.22"/>
+            <text x="66" y="31" text-anchor="middle" dominant-baseline="middle"
+                  font-family="Segoe UI, Arial, sans-serif"
+                  font-size="9" font-weight="800" fill="white">AJ</text>
+            <!-- Bottom tagline bar -->
+            <rect x="22" y="70" width="52" height="3.5" rx="1.75"
+                  fill="white" opacity="0.20"/>
+            <!-- Defs -->
+            <defs>
+                <linearGradient id="mainGrad" x1="0" y1="0" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%"   stop-color="#1E40AF"/>
+                    <stop offset="50%"  stop-color="#2563EB"/>
+                    <stop offset="100%" stop-color="#1D4ED8"/>
+                </linearGradient>
+                <linearGradient id="outerGrad" x1="0" y1="0" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%"   stop-color="#60A5FA"/>
+                    <stop offset="100%" stop-color="#3B82F6"/>
+                </linearGradient>
+                <linearGradient id="ringGrad" x1="0" y1="0" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%"   stop-color="rgba(255,255,255,0.40)"/>
+                    <stop offset="100%" stop-color="rgba(255,255,255,0.05)"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
     <div class="hero-text">
         <div class="hero-title">Employee Attrition Prediction Dashboard</div>
         <div class="hero-subtitle">
-            <b>Sheryl Ann Joseph</b> &amp; <b>Chaithrali Parabh</b> &nbsp;·&nbsp;
-            PGDM – Business Analytics 2025–27<br>
+            <b>Sheryl Ann Joseph</b> &nbsp;·&nbsp;
             DCyber TechLab Pvt Ltd, Mumbai &nbsp;·&nbsp;
             Aditya School of Business Management
         </div>
@@ -871,9 +907,9 @@ st.markdown("""
 st.markdown("""
 <div class='footer-strip'>
     🏢 &nbsp;
-    Built by <b>Sheryl Ann Joseph</b> &amp; <b>Chaithrali Parabh</b> &nbsp;·&nbsp;
+    Built by <b>Sheryl Ann Joseph</b> &nbsp;·&nbsp;
     Summer Internship Project 2025–26 &nbsp;·&nbsp;
     DCyber TechLab Pvt Ltd, Mumbai &nbsp;·&nbsp;
-    Aditya School of Business Management — PGDM Business Analytics 2025–27
+    Aditya School of Business Management
 </div>
 """, unsafe_allow_html=True)
