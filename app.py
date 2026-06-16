@@ -873,8 +873,8 @@ st.markdown("""
 <div class='footer-strip'>
     🏢 &nbsp;
     Built by <b>Sheryl Ann Joseph</b> &nbsp;·&nbsp;
-    Summer Internship Project 2025–26 &nbsp;·&nbsp;
-    DCyber TechLab Pvt Ltd, Mumbai &nbsp;·&nbsp;
+    Summer Internship Project 2026 &nbsp;·&nbsp;
+    DCyber TechLab Pvt Ltd, &nbsp;·&nbsp;
     Aditya School of Business Management
 </div>
 """, unsafe_allow_html=True)
