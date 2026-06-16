@@ -456,7 +456,6 @@ st.markdown("""
     <div class="hero-text">
         <div class="hero-title">Employee Attrition Prediction Dashboard</div>
         <div class="hero-subtitle">
-            <b>Sheryl Ann Joseph</b> &nbsp;·&nbsp;
             DCyber TechLab Pvt Ltd, Mumbai &nbsp;·&nbsp;
             Aditya School of Business Management
         </div>
