@@ -470,7 +470,7 @@ st.markdown("""
 
 
 # ============================================================
-# SIDEBAR – Dashboard Filters
+# SIDEBAR – Filters
 # ============================================================
 with st.sidebar:
     st.markdown("""
@@ -478,7 +478,7 @@ with st.sidebar:
                 padding:16px 14px 12px 14px; margin-bottom:10px; text-align:center;">
         <div style="font-size:32px; margin-bottom:6px;">⚙️</div>
         <div style="font-size:16px; font-weight:800; color:#FFFFFF;
-                    letter-spacing:0.03em;">Dashboard Filters</div>
+                    letter-spacing:0.03em;">Filters</div>
         <div style="font-size:11px; color:#93B4DC; margin-top:3px;">
             Configure employee profile to generate prediction
         </div>
