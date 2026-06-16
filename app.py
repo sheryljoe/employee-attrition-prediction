@@ -583,6 +583,13 @@ job_role_map = {
     'Manufacturing Director': 4, 'Healthcare Representative': 0, 'Manager': 3,
     'Sales Representative': 8, 'Research Director': 5, 'Human Resources': 1
 }
+department_roles = {
+    'Sales':                   ['Manager', 'Sales Executive', 'Sales Representative'],
+    'Research & Development':  ['Healthcare Representative', 'Laboratory Technician',
+                                 'Manager', 'Manufacturing Director',
+                                 'Research Director', 'Research Scientist'],
+    'Human Resources':         ['Human Resources', 'Manager'],
+}
 business_travel_map  = {'Non-Travel': 0, 'Travel_Rarely': 2, 'Travel_Frequently': 1}
 gender_map           = {'Female': 0, 'Male': 1}
 marital_status_map   = {'Divorced': 0, 'Married': 1, 'Single': 2}
@@ -682,10 +689,12 @@ with st.sidebar:
     department   = st.selectbox('Department', list(department_map.keys()),
                                  index=list(department_map.keys()).index(dept_default)
                                  if dept_default in department_map else 0)
-    role_default = dv('JobRole', 'Sales Executive')
-    job_role     = st.selectbox('Job Role', list(job_role_map.keys()),
-                                 index=list(job_role_map.keys()).index(role_default)
-                                 if role_default in job_role_map else 0)
+    _roles_for_dept = department_roles.get(department, list(job_role_map.keys()))
+    role_default = dv('JobRole', _roles_for_dept[0])
+    if role_default not in _roles_for_dept:
+        role_default = _roles_for_dept[0]
+    job_role     = st.selectbox('Job Role', _roles_for_dept,
+                                 index=_roles_for_dept.index(role_default))
     years_company  = st.slider('Years at Company',      0, 40, int(dv('YearsAtCompany', 5)))
     years_in_role  = st.slider('Years in Current Role', 0, 18, int(dv('YearsInCurrentRole', 2)))
     num_companies  = st.slider('No. of Companies Worked', 0, 9, int(dv('NumCompaniesWorked', 2)))
