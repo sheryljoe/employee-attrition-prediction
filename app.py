@@ -994,6 +994,145 @@ else:
     st.info('Dataset not found. Upload **WA_Fn-UseC_-HR-Employee-Attrition.csv** to see analytics.')
 
 
+
+
+# ============================================================
+# AT-RISK EMPLOYEES TABLE
+# ============================================================
+st.markdown("<div class='styled-div'></div>", unsafe_allow_html=True)
+st.markdown("""
+<div class="sec-header">
+    <div class="icon-box">🚨</div>
+    <div class="sec-title">At-Risk Employee Flagging — Predicted to Leave</div>
+</div>
+""", unsafe_allow_html=True)
+
+if raw_df is not None:
+    @st.cache_data
+    def get_at_risk_employees(_model, _scaler):
+        df_all = raw_df.copy()
+
+        # Encode all categorical columns
+        _dept_map    = {'Sales': 2, 'Research & Development': 1, 'Human Resources': 0}
+        _role_map    = {'Sales Executive':7,'Research Scientist':6,'Laboratory Technician':2,
+                        'Manufacturing Director':4,'Healthcare Representative':0,'Manager':3,
+                        'Sales Representative':8,'Research Director':5,'Human Resources':1}
+        _travel_map  = {'Non-Travel':0,'Travel_Rarely':2,'Travel_Frequently':1}
+        _gender_map  = {'Female':0,'Male':1}
+        _marital_map = {'Divorced':0,'Married':1,'Single':2}
+        _edu_map     = {'Life Sciences':1,'Medical':3,'Marketing':2,
+                        'Technical Degree':5,'Human Resources':0,'Other':4}
+        _ot_map      = {'No':0,'Yes':1}
+
+        df_enc = df_all.copy()
+        df_enc['BusinessTravel']  = df_enc['BusinessTravel'].map(_travel_map)
+        df_enc['Department']      = df_enc['Department'].map(_dept_map)
+        df_enc['EducationField']  = df_enc['EducationField'].map(_edu_map)
+        df_enc['Gender']          = df_enc['Gender'].map(_gender_map)
+        df_enc['JobRole']         = df_enc['JobRole'].map(_role_map)
+        df_enc['MaritalStatus']   = df_enc['MaritalStatus'].map(_marital_map)
+        df_enc['OverTime']        = df_enc['OverTime'].map(_ot_map)
+
+        # Select same features as model (drop non-feature cols)
+        drop_cols = ['Attrition', 'EmployeeNumber', 'Over18', 'StandardHours']
+        _n_expected = getattr(_scaler, 'n_features_in_', 30)
+        if _n_expected == 30:
+            drop_cols.append('EmployeeCount')
+
+        feature_cols = [c for c in df_enc.columns if c not in drop_cols]
+        X_all = df_enc[feature_cols].values
+
+        probs = _model.predict_proba(_scaler.transform(X_all))[:, 1]
+        preds = _model.predict(_scaler.transform(X_all))
+
+        df_all['Attrition_Prob'] = probs
+        df_all['Predicted']      = preds
+        return df_all
+
+    df_risk = get_at_risk_employees(model, scaler)
+
+    # ── Controls row ──
+    ctrl1, ctrl2, ctrl3 = st.columns([1, 1, 1])
+    with ctrl1:
+        threshold = st.slider('Risk Threshold (%)', 30, 90, 50, step=5,
+                              help="Only show employees above this attrition probability")
+    with ctrl2:
+        dept_filter = st.selectbox('Filter by Department',
+                                   ['All'] + list(raw_df['Department'].unique()))
+    with ctrl3:
+        sort_by = st.selectbox('Sort by', ['Risk % (High → Low)', 'Employee Number', 'Department'])
+
+    # ── Filter ──
+    flagged = df_risk[df_risk['Attrition_Prob'] >= threshold / 100].copy()
+    if dept_filter != 'All':
+        flagged = flagged[flagged['Department'] == dept_filter]
+
+    sort_map = {
+        'Risk % (High → Low)': ('Attrition_Prob', False),
+        'Employee Number':      ('EmployeeNumber', True),
+        'Department':           ('Department', True),
+    }
+    scol, sasc = sort_map[sort_by]
+    flagged = flagged.sort_values(scol, ascending=sasc)
+
+    # ── Summary badges ──
+    total_flagged = len(flagged)
+    avg_risk      = flagged['Attrition_Prob'].mean() * 100 if total_flagged > 0 else 0
+    high_risk     = len(flagged[flagged['Attrition_Prob'] >= 0.75])
+
+    b1, b2, b3 = st.columns(3)
+    b1.metric("🚨 Employees Flagged", total_flagged,
+              help=f"Above {threshold}% risk threshold")
+    b2.metric("📊 Avg Risk Score",    f"{avg_risk:.1f}%")
+    b3.metric("🔴 High Risk (≥75%)",  high_risk)
+
+    st.markdown("<div style='height:10px'></div>", unsafe_allow_html=True)
+
+    if total_flagged == 0:
+        st.info(f"No employees flagged above {threshold}% threshold for the selected filters.")
+    else:
+        # ── Build display table ──
+        display_cols = {
+            'EmployeeNumber': 'Emp No.',
+            'Age':            'Age',
+            'Gender':         'Gender',
+            'Department':     'Department',
+            'JobRole':        'Job Role',
+            'JobLevel':       'Level',
+            'MaritalStatus':  'Marital',
+            'OverTime':       'Overtime',
+            'MonthlyIncome':  'Monthly Income',
+            'YearsAtCompany': 'Tenure (yrs)',
+            'Attrition_Prob': 'Risk %',
+            'Attrition':      'Actual',
+        }
+        tbl = flagged[list(display_cols.keys())].copy()
+        tbl = tbl.rename(columns=display_cols)
+        tbl['Risk %']        = (tbl['Risk %'] * 100).round(1).astype(str) + '%'
+        tbl['Monthly Income']= tbl['Monthly Income'].apply(lambda x: f"₹{int(x):,}")
+
+        def colour_risk(val):
+            v = float(val.replace('%',''))
+            if v >= 75:   return 'background-color:#FEE2E2; color:#991B1B; font-weight:700'
+            elif v >= 50: return 'background-color:#FEF3C7; color:#92400E; font-weight:600'
+            else:          return 'background-color:#FFF7ED; color:#9A3412'
+
+        styled = tbl.style.applymap(colour_risk, subset=['Risk %'])
+        st.dataframe(styled, use_container_width=True, hide_index=True, height=420)
+
+        # ── Download button ──
+        csv_data = flagged[list(display_cols.keys())].rename(columns=display_cols)
+        csv_data['Risk %'] = (csv_data['Risk %'] * 100).round(1)
+        st.download_button(
+            label="⬇️  Download Flagged Employees (CSV)",
+            data=csv_data.to_csv(index=False),
+            file_name=f"at_risk_employees_threshold{threshold}.csv",
+            mime="text/csv",
+        )
+else:
+    st.info('Dataset not found. Upload **WA_Fn-UseC_-HR-Employee-Attrition.csv** to see at-risk employees.')
+
+
 # ============================================================
 # MODEL METRICS FOOTER
 # ============================================================
