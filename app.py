@@ -673,6 +673,10 @@ with st.sidebar:
     gender_sel = st.selectbox('Gender', ['Male', 'Female'],
                                index=['Male','Female'].index(gender_default)
                                if gender_default in ['Male','Female'] else 0)
+    marital_default = dv('MaritalStatus', 'Single')
+    marital_sel = st.selectbox('Marital Status', ['Single', 'Married', 'Divorced'],
+                                index=['Single','Married','Divorced'].index(marital_default)
+                                if marital_default in ['Single','Married','Divorced'] else 0)
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -731,7 +735,7 @@ _base_features = {
     'JobLevel':                 job_level,
     'JobRole':                  job_role_enc,
     'JobSatisfaction':          job_sat,
-    'MaritalStatus':            marital_status_map.get(dv('MaritalStatus','Married'), 1),
+    'MaritalStatus':            marital_status_map.get(marital_sel, 1),
     'MonthlyIncome':            monthly_income,
     'MonthlyRate':              int(dv('MonthlyRate', 14000)),
     'NumCompaniesWorked':       num_companies,
@@ -819,6 +823,7 @@ with col_sum:
     rows = [
         ("Age",                     f"{age} yrs"),
         ("Gender",                  gender_sel),
+        ("Marital Status",          marital_sel),
         ("Monthly Income",          f"₹{monthly_income:,}"),
         ("OverTime",                overtime),
         ("Department",              department),
