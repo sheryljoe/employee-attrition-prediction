@@ -97,6 +97,19 @@ html, body, [class*="css"] {
     color: #FFFFFF !important;
     border-radius: 8px !important;
 }
+/* Number input wrapper and step buttons */
+[data-testid="stSidebar"] .stNumberInput > div,
+[data-testid="stSidebar"] .stNumberInput > div > div,
+[data-testid="stSidebar"] [data-testid="stNumberInput"],
+[data-testid="stSidebar"] [data-testid="stNumberInput"] > div {
+    background: rgba(255,255,255,0.10) !important;
+    border-color: rgba(255,255,255,0.20) !important;
+}
+[data-testid="stSidebar"] .stNumberInput button {
+    background: rgba(255,255,255,0.12) !important;
+    border-color: rgba(255,255,255,0.20) !important;
+    color: #FFFFFF !important;
+}
 [data-testid="stSidebar"] hr {
     border: none;
     border-top: 1px solid rgba(255,255,255,0.12);
