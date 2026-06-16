@@ -67,12 +67,13 @@ html, body, [class*="css"] {
 }
 [data-testid="stSidebar"] > div:first-child {padding-top: 0;}
 
-/* All sidebar text */
+/* All sidebar text — transparent bg so dark sidebar shows through */
 [data-testid="stSidebar"] p,
 [data-testid="stSidebar"] span,
 [data-testid="stSidebar"] div,
 [data-testid="stSidebar"] label {
     color: #E0EAFF !important;
+    background-color: transparent !important;
 }
 /* Input labels – bright white, readable */
 [data-testid="stSidebar"] .stSlider label,
@@ -89,24 +90,35 @@ html, body, [class*="css"] {
     color: #7DD3FC !important;
     font-weight: 700;
 }
-/* Selectbox & number input fields */
-[data-testid="stSidebar"] .stSelectbox > div > div,
-[data-testid="stSidebar"] .stNumberInput input {
+/* Selectbox fields */
+[data-testid="stSidebar"] .stSelectbox > div > div {
     background: rgba(255,255,255,0.10) !important;
     border: 1px solid rgba(255,255,255,0.20) !important;
     color: #FFFFFF !important;
     border-radius: 8px !important;
 }
-/* Number input wrapper and step buttons */
-[data-testid="stSidebar"] .stNumberInput > div,
-[data-testid="stSidebar"] .stNumberInput > div > div,
+/* Number input — nuclear override for ALL nested elements */
+[data-testid="stSidebar"] .stNumberInput,
+[data-testid="stSidebar"] .stNumberInput *,
 [data-testid="stSidebar"] [data-testid="stNumberInput"],
-[data-testid="stSidebar"] [data-testid="stNumberInput"] > div {
-    background: rgba(255,255,255,0.10) !important;
-    border-color: rgba(255,255,255,0.20) !important;
+[data-testid="stSidebar"] [data-testid="stNumberInput"] * {
+    background-color: transparent !important;
+    color: #FFFFFF !important;
 }
-[data-testid="stSidebar"] .stNumberInput button {
-    background: rgba(255,255,255,0.12) !important;
+[data-testid="stSidebar"] .stNumberInput input,
+[data-testid="stSidebar"] [data-testid="stNumberInput"] input {
+    background-color: rgba(255,255,255,0.10) !important;
+    border: 1px solid rgba(255,255,255,0.20) !important;
+    color: #FFFFFF !important;
+    border-radius: 8px !important;
+    caret-color: #FFFFFF !important;
+}
+[data-testid="stSidebar"] .stNumberInput input::placeholder {
+    color: rgba(255,255,255,0.5) !important;
+}
+[data-testid="stSidebar"] .stNumberInput button,
+[data-testid="stSidebar"] [data-testid="stNumberInput"] button {
+    background-color: rgba(255,255,255,0.12) !important;
     border-color: rgba(255,255,255,0.20) !important;
     color: #FFFFFF !important;
 }
