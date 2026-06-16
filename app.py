@@ -669,6 +669,10 @@ with st.sidebar:
                              if ot_default in ['No','Yes'] else 0)
     job_level = st.selectbox('Job Level', [1,2,3,4,5],
                               index=int(dv('JobLevel',1))-1)
+    gender_default = dv('Gender', 'Male')
+    gender_sel = st.selectbox('Gender', ['Male', 'Female'],
+                               index=['Male','Female'].index(gender_default)
+                               if gender_default in ['Male','Female'] else 0)
 
     st.markdown("<hr>", unsafe_allow_html=True)
 
@@ -721,7 +725,7 @@ _base_features = {
     'Education':                int(dv('Education', 3)),
     'EducationField':           education_field_map.get(dv('EducationField','Life Sciences'), 1),
     'EnvironmentSatisfaction':  env_sat,
-    'Gender':                   gender_map.get(dv('Gender','Male'), 1),
+    'Gender':                   gender_map.get(gender_sel, 1),
     'HourlyRate':               int(dv('HourlyRate', 65)),
     'JobInvolvement':           int(dv('JobInvolvement', 3)),
     'JobLevel':                 job_level,
@@ -814,6 +818,7 @@ with col_pred:
 with col_sum:
     rows = [
         ("Age",                     f"{age} yrs"),
+        ("Gender",                  gender_sel),
         ("Monthly Income",          f"₹{monthly_income:,}"),
         ("OverTime",                overtime),
         ("Department",              department),
