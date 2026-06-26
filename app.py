@@ -829,7 +829,7 @@ with st.expander("ℹ️  How to use this dashboard  |  About the prediction mod
 The IBM HR dataset contains historical records of employees who have already left or stayed.
 This labelled data is used to train the Random Forest model to learn patterns that distinguish
 employees who leave from those who stay. Once trained, the model can be applied to **any
-employee profile, including current employees whose outcome is unknown** , to generate a
+employee profile, including current employees whose outcome is unknown**, to generate a
 forward-looking attrition probability score.
 
 **How to use the Individual Prediction panel:**
